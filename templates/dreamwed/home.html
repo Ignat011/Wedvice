@@ -1,0 +1,59 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block title %}home{% endblock title %}
+
+{% block body %}
+{% include 'include/header.html' %}
+
+<!-- header section -->
+<div id="thebackground">
+	<div class="container-fluid">
+		<div class="row align-items-center justify-content-end">
+		<div class="col-3 mt-5 p-5" style="margin-top:100px">
+			
+			<p class="display-6 text-primary">Поможем создать свадьбу вашей мечты!</p>
+		</div>
+	</div>
+	</div>
+</div>
+
+
+<!-- about dreamwed -->
+
+<section class="mt-5">
+	<div class="container-fluid">
+		<div class="row bg-light justify-content-center p-3">
+			<div class="col-9 p-3">
+				<h2 class="text-primary mt-3">Что делает Wedvice?</h2>
+				<p class="lead">Wedvice - это то место, где вам нужно быть, планируя свадьбу своей мечты. Свадьба - это радостный и запоминающийся момент, но планирование может быть очень напряженным, с Wedvice вам больше не о чем беспокоиться! Wedvice позволяет вам связаться с поставщиками свадебных услуг, такими как флористы, организаторы свадеб, портные, фотографы и т.д. Если этого недостаточно, мы предоставляем такие инструменты, как составление бюджета и список приглашенных, которые помогут вам спланировать день вашей мечты! Чего же вы ждете? Давайте воплотим свадьбу вашей мечты в реальность!</p>
+				
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<!--  For Vendors -->
+<section  >
+  <div class="container mt-5 bg-light ">
+    <div class="row  justify-content-around align-items-center p-3">
+       <div class="col-6">
+        <h2 class="text-primary">Для поставщиков</h2>
+        <p class="lead justify-content-start text-dark">Вы свадебный фотограф, пекарь, флорист, арендуете помещения? по сути, если вы предлагаете какие-либо свадебные услуги, вы находитесь в нужном месте! Wedvice предоставляет свадебным агентствам возможность продемонстрировать свои услуги более широкой аудитории и получить доступ к клиентам.</p>
+      </div>
+      <div class="col-5 d-none d-md-block">
+        <img src="{% static 'images/budget.jpg' %}" alt="My image">
+      </div>
+    </div>
+    
+  </div>
+  
+</section>
+
+
+{% endblock body %}
+
+
+    
+

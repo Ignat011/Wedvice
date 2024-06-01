@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %} User profile {% endblock %}
+
+{% block body %}
+{% include 'include/header.html' %}
+
+<div class="container">
+   <div class="row align-items-start py-5">
+      <div class="col-3 shadow px-2 pt-4 pb-5 text-center">
+         <div class="d-flex justify-content-center">
+            <div class="d-flex align-items-center justify-content-center circle-profile rounded-circle shadow-sm border p-1">
+               <div class="d-flex align-items-center overflow-hidden rounded-circle w-100 h-100">
+                  <img src="{{ user.profile.url }}" class="d-block w-100" alt="">
+               </div>
+            </div>
+         </div>
+         <h2 class="mt-3">Здравствуйте, {{ user.username }}! </h2>
+
+         <ul class="list-group py-3 text-start">
+            <li class="list-group-item"><span class="text-muted">Логин:</span>
+               <span>{{ user.username }}</span>
+            </li>
+            <li class="list-group-item"><span class="text-muted">Имя:</span>
+               <span>{{ user.first_name }}</span>
+            </li>
+            <li class="list-group-item"><span class="text-muted">Фамилия:</span>
+               <span>{{ user.last_name }}</span>
+            </li>
+            <li class="list-group-item"><span class="text-muted">Email:</span>
+               <span>{{ user.email }}</span>
+            </li>
+         </ul>
+
+         <a href="{% url 'user-account-info-update' %}" class="btn btn-primary">
+            <i class="fas fa-pencil-alt"></i>
+            <span class="ms-1">Изменить информацию</span>
+         </a>
+
+         <div class="mt-5">
+            Хотите сменить свой пароль? <br>
+            <a class="d-inline-block mt-1" href="#">
+               <i class="fas fa-lock"></i>
+               <span class="ms-1">Сменить пароль</span>
+            </a>
+         </div>
+      </div>
+
+      <div class="col shadow px-4 pt-4 pb-5 ms-5">
+         {% block extra-profile-info %}{% endblock extra-profile-info %}
+      </div>
+   </div>
+</div>
+{% endblock body %}
+
+{% block scripts %}
+{% endblock scripts %}

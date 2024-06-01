@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %} Wedding Planner Profile Update {% endblock title %}
+{% block body %}
+<div class="container">
+   <div class="text-center py-5">
+      <form method="POST">
+         {% csrf_token %}
+
+         <fieldset>
+            <legend>Обновление профиля организатора свадьбы</legend>
+            {% for field in form.visible_fields %}
+            <div class="form-group mb-3" id="form_{{ field.name }}">
+               {{ field.label_tag }}
+               {% render_field field class+="form-control" %}
+               {% for error in field.errors %}
+               <span style="color:red">{{ error }}</span>
+               {% endfor %}
+            </div>
+            {% endfor %}
+         </fieldset>
+         <button type="submit" class="btn btn-primary">Обновить</button>
+      </form>
+   </div>
+</div>
+{% endblock body %}

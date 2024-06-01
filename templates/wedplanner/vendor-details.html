@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %} {{ vendor.business_name }} {% endblock %}
+
+{% block body %}
+{% include 'include/header.html' %}
+<!-- Rate Vendor Modal -->
+<div class="modal fade" id="rateVendor" tabindex="-1" role="dialog" aria-labelledby="rateVendorTitle"
+   aria-hidden="true">
+   <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <form action="{% url 'rate-vendor' vendor.user_id %}" method="POST" name="rateVendorForm" class="modal-content">
+         {% csrf_token %}
+
+         <div class="modal-header">
+            <h5 class="modal-title" id="rateVendorTitle">Отзыв {{ vendor.business_name }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+
+         <div class="modal-body">
+            <div class="modal-body">
+               {% for field in review_form.visible_fields %}
+               <div class="form-group">
+                  {{ field.label_tag }}
+                  {% render_field field class+="form-control"%}
+                  {% if field.help_text %}
+                  <span class="help-text">{{ field.help_text }}</span>
+                  {% endif %}
+                  {% for error in field.erros %}
+                  <span style="color:red">{{ error }}</span>
+                  {% endfor %}
+               </div>
+               {% endfor %}
+            </div>
+         </div>
+
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Опубликовать обзор</button>
+         </div>
+      </form>
+   </div>
+</div>
+
+<section class="intro">
+   <div class="container">
+      <div class="d-flex justify-content-between py-4 mt-3">
+         <h2>{{ vendor.business_name }}</h2>
+         <div class="cta">
+            <a class="btn btn-primary" href="#">Сохранить поставщика</a>
+            <a class="btn btn-success" href="#">Запросить цену</a>
+         </div>
+      </div>
+   </div>
+</section>
+
+<main>
+   <!-- <style>
+      main,
+      #vendor-details {
+         position: relative;
+      }
+
+      #vendor-details .main-content {
+         position: relative;
+         height: 400px;
+         overflow: auto;
+      }
+   </style> -->
+
+
+   <div class="container grid-200-auto" id="vendor-details">
+      <div class="sidebar">
+         <div id="side-nav" class="list-group">
+            <a class="list-group-item list-group-item-action" href="#vendor-gallery">Галерея</a>
+            <a class="list-group-item list-group-item-action" href="#vendor-description">Описание</a>
+            <a class="list-group-item list-group-item-action" href="#vendor-reviews">Просмотры</a>
+         </div>
+
+         <!-- <div class="cta mt-3">
+            <button type="button" class="btn btn-primary">Request pricing</button>
+            <button type="button" class="btn btn-light mt-1">Save vendor</button>
+         </div> -->
+      </div>   
+
+      <div data-bs-spy="scroll" data-bs-target="#side-nav" data-bs-offset="0" class="main-content" tabindex="0">
+         <div id="vendor-gallery">
+         <div id="carouselVendorPictures" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+               {% for img_file in vendor_images %}
+               <button type="button" data-bs-target="#carouselVendorPictures"></button>
+               {% endfor %}
+            </div>
+         
+            <div class="carousel-inner">
+               {% for img_file in vendor_images %}
+               <div class="carousel-item">
+                  <div class="d-flex align-items-end overflow-hidden" style="height: 400px;">
+                     <img src="{{ img_file.image.url }}" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-caption d-none d-md-block">
+                     <h5>{{ img_file.caption }}</h5>
+                  </div>
+               </div>
+               {% endfor %}
+            </div>
+         
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselVendorPictures" data-bs-slide="prev">
+               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+               <span class="visually-hidden">Предыдущий</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselVendorPictures" data-bs-slide="next">
+               <span class="carousel-control-next-icon" aria-hidden="true"></span>
+               <span class="visually-hidden">Следующий</span>
+            </button>
+         </div>
+         </div>
+
+         <h4 class="mt-5" id="vendor-description">Об этом бизнесе</h4>
+         <p>{{ vendor.description }}</p>
+         
+         <h4 class="mt-5">Предлагаемые услуги</h4>
+         <p>{{ vendor.services_offered }}</p>
+
+         <section class="reviews mt-5">
+            <div class="d-flex align-items-end justify-content-between">
+               <div>
+                  <h4 id="vendor-reviews">{{ vendor_reviews|length }} Просмотры</h4>
+                  <div class="text-muted">СОРТИРОВАТЬ ПО:</div>
+                  <select name="sort" id="sort" class="form-select">
+                     <option value="">Новейший</option>
+                     <option value="">Старейший</option>
+                     <option value="">Высокий рейтинг</option>
+                     <option value="">Низкий рейтинг</option>
+                  </select>
+               </div>
+               <button class="btn btn-primary px-3 py-2" data-bs-toggle="modal" data-bs-target="#rateVendor">Оценка {{ vendor.business_name }}</button>
+            </div>
+
+            <hr class="my-4">
+
+            {% if vendor_reviews %}
+               {% for review in vendor_reviews %}
+                  <div class="review d-flex align-items-start mb-3">
+                     <div class="circle-50 d-flex align-items-center justify-content-center rounded-circle border bg-light fs-4 me-2">{{ review.wedplanner.user.last_name|make_list|first }}</div>
+                     <div class="msg">
+                        <strong class="me-1">{{ review.wedplanner.user.first_name }} {{ review.wedplanner.user.last_name }}</strong>
+                        <small class="text-muted">[Married on {{ review.wedplanner.wedding_date }}]</small>
+                        <div class="rating" data-rating="{{ review.stars }}"></div>
+                        <p>{{ review.comment }}</p>
+                     </div>
+
+                     {% if review.wedplanner.user_id == user.id %}
+                        <div class="mt-1">
+                           <a href="{% url 'edit-vendor-review' review.id %}" class="btn btn-outline-primary btn-sm ms-4">
+                              <i class="fas fa-pencil-alt"></i>
+                              <span class="ms-1">Редактировать</span>
+                           </a>
+                           <a href="{% url 'delete-vendor-review' review.id %}" class="btn btn-outline-secondary btn-sm ms-1">
+                              <i class="fas fa-trash-alt"></i>
+                              <span class="ms-1">Удалить</span>
+                           </a>
+                        </div>
+                     {% endif %}
+                  </div>
+               {% endfor %}
+            {% else %}
+               <div class="text-center text-muted mt-5">
+                  <h6>Нет отзывов об этом поставщике.</h6>
+                  <p>Будьте первыми, кто оценит {{ vendor.business_name }}.</p>
+               </div>
+            {% endif %}
+         </section>
+      </div>
+   </div>
+   </div>
+</main>
+
+<script>
+   window.onload = () => {
+      fixCarousel();
+      document.querySelectorAll('.rating').forEach(rating => fixRatingStars(rating));
+   }
+
+   async function fixCarousel() {
+      let carouselIndicators = document.querySelectorAll('.carousel-indicators button');
+      carouselIndicators[0].classList.add('active');
+      carouselIndicators[0].setAttribute('aria-current', true);
+      document.querySelector('.carousel-item').classList.add('active'); // first 'carousel-item'
+
+      for (let x = 0; x < carouselIndicators.length; x++) {
+         let ariaLabel = 'Slide ' + (1 + x);
+         carouselIndicators[x].setAttribute('data-bs-slide-to', x);
+         carouselIndicators[x].setAttribute('aria-label', ariaLabel);
+      }
+   }
+
+   async function fixRatingStars(ratingDiv) {
+      let rating = Number(ratingDiv.getAttribute('data-rating'));
+
+      for (let x = 1; x <= rating; x++) {
+         let star = `<i class="fas fa-star" class="d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top" title="${x}" style="color: var(--bs-pink);"></i>`;
+         ratingDiv.innerHTML += star;
+      }
+
+      if (rating < 5) {
+         for (let x = 1; x <= 5 - rating; x++) {
+            let extraStar = `<i class="far fa-star" class="d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top" title="${x + rating}" style="color: var(--bs-pink);"></i>`;
+            ratingDiv.innerHTML += extraStar;
+         }
+      }
+   }
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+My wedding Team
+{% endblock title %}
+
+{% block body %}
+{% include 'include/header.html' %}
+<div class="container">
+   <h3 class="my-5">Моя свадебная команда</h3>
+   <ul class="list-group list-group-flush">
+      {% for vendor in bookmarks %}
+         <li class="list-group-item list-group-item-action">
+            <div class="d-flex py-1">
+               <img src="{{ vendor.user.profile.url }}" width="70" height="50" class="rounded" alt="vendor profile">
+               <a href="{% url 'vendor-details' vendor.user_id %}" class="flex-grow-1 ms-4">
+                  {{ vendor.business_name }} <br>
+                  <span class="text-muted">{{ vendor.category.name }}</span>
+               </a>
+               <div class="ms-4 align-self-center">
+                  <a href="tel:+{{ vendor.user.phone_number }}" class="d-inline-flex align-items-center btn btn-sm btn-primary">
+                     <i class="fas fa-phone-alt fs-6"></i>
+                     <span class="ms-2">Звонок</span>
+                  </a>  
+                  <a href="mailto:{{ vendor.user.email }}" class="d-inline-flex align-items-center btn btn-sm btn-success ms-1">
+                     <i class="far fa-envelope fs-6"></i> 
+                     <span class="ms-2">Email</span>
+                  </a>
+
+                  <div class="dropdown d-inline-block ms-4">
+                     <button class="circle-sm rounded-circle btn btn-outline-secondary border-0 dropdown-toggle dropdown-no-arrow" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                     </button>
+                  
+                     <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="dropdownMenu2">
+                        <li><a class="dropdown-item" type="button">
+                              <i class="fas fa-envelope text-muted fs-5"></i>
+                              <span class="ms-3">Inbox</span>
+                           </a></li>
+                        <li><a class="dropdown-item" type="button">
+                              <i class="fas fa-trash-alt text-muted fs-5"></i>
+                              <span class="ms-3">Удалить из команды</span>
+                           </a></li>
+                     </ul>
+                  </div>
+               </div>
+            </div>
+         </li>
+      {% endfor %}
+      <a class="list-group-item"></a>
+   </ul>
+</div>
+{% endblock body %}

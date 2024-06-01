@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %} Guestlist Manager {% endblock %}
+
+{% block body %}
+<!-- Modal -->
+<div class="modal fade" id="addGuest" tabindex="-1" role="dialog" aria-labelledby="addGuestTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <form onsubmit="addGuest(event)" name="addGuestForm" class="modal-content">
+         {% csrf_token %}
+
+         <div class="modal-header">
+            <h5 class="modal-title" id="addGuestTitle">Добавить нового гостя</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+
+         <div class="modal-body">
+         {% for field in form.visible_fields %}
+            <div class="form-group">
+               {{ field.label_tag }}
+               {% render_field field class+="form-control"%}
+               {% if field.help_text %}
+                  <span class="help-text">{{ field.help_text }}</span>
+               {% endif %}
+               {% for error in field.erros %}
+                  <span style="color:red">{{ error }}</span>
+               {% endfor %}
+            </div>
+         {% endfor %}
+         </div>
+
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Добавить гостя</button>
+         </div>
+      </form>
+   </div>
+</div>
+
+
+{% include 'include/header.html' %}
+{% include 'include/tools-nav.html' %}
+
+<section>
+   <div class="container grid-200-auto">
+      <div class="side-nav py-4 pe-2">
+         <a href="#" class="nav-item nav-item-active">Все мероприятия</a>
+         <a href="#" class="nav-item">День свадьбы</a>
+         <a href="#" class="nav-item">Банкет</a>
+      </div>
+
+      <div class="main-content py-4">
+         <div class="d-flex justify-content-between align-items-end">
+            <div class="d-flex">
+               <span>ФИЛЬТРОВАТЬ ПО:</span>
+               <div class="form-group mx-2 mb-0">
+                  <label for="">Статус ответа на приглашение:</label>
+                  <select name="rsvp" id="rsvp-filter"  class="form-select">
+                     <option value="" selected>---------</option>
+                     {% for option in rsvp_choices %}
+                        <option value="{{ option.0 }}">{{ option.1 }}</option>
+                     {% endfor %}
+                  </select>
+               </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGuest">
+               <i class="fas fa-plus"></i>
+               <span class="ms-1">Добавить гостя</span>
+            </button>
+         </div>
+
+         <table class="table mt-4" id="guestlistTable">
+            <thead>
+               <tr>
+                  <th>Имя</th>
+                  <th>Статус ответа</th>
+                  <th>Примечание</th>
+                  <th class="text-end">Опции</th>
+               </tr>
+            </thead>
+
+            <tbody></tbody>
+         </table>
+      </div>
+   </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/guestlist.js' %}"></script>
+{% endblock scripts %}

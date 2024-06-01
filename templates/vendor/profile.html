@@ -1,0 +1,259 @@
+{% extends 'include/user-profile-base.html' %}
+{% load widget_tweaks %}
+
+{% block extra-profile-info %}
+<!-- Upload picture Modal -->
+<div class="modal fade" id="uploadPicture" tabindex="-1" role="dialog" aria-labelledby="uploadPictureTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <form action="{% url 'upload-new-picture' %}" id="uploadPicture" class="modal-content" method="POST" enctype='multipart/form-data'>
+         {% csrf_token %}
+
+         <div class="modal-header">
+            <h5 class="modal-title" id="uploadPictureTitle">Upload new business picture</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+
+         <div class="modal-body">
+            {% for field in img_form.visible_fields %}
+            <div class="form-group">
+               {{ field.label_tag }}
+               {% render_field field class+="form-control"%}
+               {% if field.help_text %}
+               <span class="help-text">{{ field.help_text }}</span>
+               {% endif %}
+               {% for error in field.erros %}
+               <span style="color:red">{{ error }}</span>
+               {% endfor %}
+            </div>
+            {% endfor %}
+         </div>
+
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save picture</button>
+         </div>
+      </form>
+   </div>
+</div>
+
+<!-- Update picture Modal -->
+<div class="modal fade" id="updatePicture" tabindex="-1" role="dialog" aria-labelledby="updatePictureTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <form class="modal-content" id="updatePictureForm" method="POST" enctype='multipart/form-data'>
+         {% csrf_token %}
+
+         <div class="modal-header">
+            <h5 class="modal-title" id="updatePictureTitle">Update business picture</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+
+         <div class="modal-body">
+            {% for field in img_form.visible_fields %}
+            <div class="form-group">
+               {{ field.label_tag }}
+               {% render_field field class+="form-control"%}
+               {% if field.help_text %}
+               <span class="help-text">{{ field.help_text }}</span>
+               {% endif %}
+               {% for error in field.erros %}
+               <span style="color:red">{{ error }}</span>
+               {% endfor %}
+            </div>
+            {% endfor %}
+         </div>
+
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save picture</button>
+         </div>
+      </form>
+   </div>
+</div>
+
+<section class="py-2">
+   <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center text-center">
+      <div class="col">
+         <div class=" border border-1 rounded bg-light py-5">
+            <h6>Новых сообщений</h5>
+            <h1 class="text-muted">10</h1>
+         </div>
+      </div>
+      <div class="col">
+         <div class=" border border-1 rounded bg-light py-5">
+            <h6>Новые запросы о ценах</h5>
+            <h1 class="text-muted">05</h1>
+         </div>
+      </div>
+      <div class="col">
+         <div class=" border border-1 rounded bg-light py-5">
+            <h6>Новые коментарии</h6>
+            <h1 class="text-muted">05</h1>
+         </div>
+      </div>
+   </div>
+</section>
+
+<ul class="list-group list-group-flush py-2">
+   <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+      <div>
+         <div class="text-muted">Название компании:</div>
+         {{ user.vendor.business_name }}
+      </div>
+      <a href="{% url 'update-business-profile' %}" class="btn btn-outline-primary btn-sm ms-2">
+         <i class="fas fa-pencil-alt"></i>
+         <span class="ms-1">Редактировать</span>
+      </a>
+   </li>
+   <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+      <div>
+         <div class="text-muted">Категория бизнеса:</div>
+         {{ user.vendor.category }}
+      </div>
+      <a href="{% url 'update-business-profile' %}" class="btn btn-outline-primary btn-sm ms-2">
+         <i class="fas fa-pencil-alt"></i>
+         <span class="ms-1">Редактировать</span>
+      </a>
+   </li>
+   <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+      <div>
+         <div class="text-muted">Описание бизнеса:</div>
+         {{ user.vendor.description }}
+      </div>
+      <a href="{% url 'update-business-profile' %}" class="btn btn-outline-primary btn-sm ms-2">
+         <i class="fas fa-pencil-alt"></i>
+         <span class="ms-1">Редактировать</span>
+      </a>
+   </li>
+   <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+      <div>
+         <div class="text-muted">Предлагаемые услуги:</div>
+         {{ user.vendor.services_offered }}
+      </div>
+      <a href="{% url 'update-business-profile' %}" class="btn btn-outline-primary btn-sm ms-2">
+         <i class="fas fa-pencil-alt"></i>
+         <span class="ms-1">Редактировать</span>
+      </a>
+   </li>
+   <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+      <div>
+         <div class="text-muted">На месте:</div>
+         {{ user.vendor.location }}, {{ user.vendor.city }}
+      </div>
+      <a href="{% url 'update-business-profile' %}" class="btn btn-outline-primary btn-sm ms-2">
+         <i class="fas fa-pencil-alt"></i>
+         <span class="ms-1">Редактировать</span>
+      </a>
+   </li>
+</ul>
+
+<div class="mt-5 mb-4 text-center">
+   <h5 class="mb-0">{{ user.vendor.business_name }} Gallery</h5>
+   <p class="text-muted">Вы можете добавить до 5 изображений для вашего бизнеса. Ваш сервис не будет отображаться в результатах поиска, если у вас будет менее 3 изображений!</p>
+</div>
+
+<div class="text-center">
+   <button type="button" id="upload-picture-btn" class="btn btn-primary mb-4" data-bs-toggle="modal"
+      data-bs-target="#uploadPicture">
+      <i class="fas fa-plus"></i>
+      <span class="ms-1">Новое изображение</span>
+   </button>
+
+   <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center py-3">
+      {% for img_file in images %}
+         <figure class="col vendor-img" data-img-id="{{ img_file.id }}">
+            <div class="d-flex align-items-end overflow-hidden" style="height: 140px;">
+               <img src="{{ img_file.image.url }}" class="d-block w-100" alt="">
+            </div>
+            <figcaption class="my-2">{{ img_file.caption }}</figcaption> 
+
+            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#updatePicture"
+               onclick="fillImageSavedValues(this.parentElement)">
+               <i class="fas fa-pencil-alt"></i>
+               <span class="ms-1">Изменить</span>
+            </button>
+            <a href="{% url 'delete-picture' img_file.id %}" class="btn btn-outline-secondary btn-sm ms-1">
+               <i class="fas fa-trash-alt"></i> 
+               <span class="ms-1">Удалить</span>
+            </a>
+         </figure>
+      {% endfor %}
+   </div>
+
+   <div class="mt-5 mb-4 text-center">
+      <h5 class="mb-0">Предварительный просмотр галереи</h5>
+      <p class="text-muted">Именно так конечные пользователи видят ваши фотографии.</p>
+   </div>
+
+   <div id="carouselVendorPictures" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+         {% for img_file in images %}
+            <button type="button" data-bs-target="#carouselVendorPictures"></button>
+         {% endfor %}
+      </div>
+
+      <div class="carousel-inner">
+         {% for img_file in images %}
+            <div class="carousel-item">
+               <div class="d-flex align-items-end overflow-hidden" style="height: 400px;">
+                  <img src="{{ img_file.image.url }}" class="d-block w-100" alt="...">
+               </div>
+               <div class="carousel-caption d-none d-md-block">
+                  <h5>{{ img_file.caption }}</h5>
+               </div>
+            </div>
+         {% endfor %}
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselVendorPictures" data-bs-slide="prev">
+         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+         <span class="visually-hidden">Предыдущий</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselVendorPictures" data-bs-slide="next">
+         <span class="carousel-control-next-icon" aria-hidden="true"></span>
+         <span class="visually-hidden">Следующий</span>
+      </button>
+   </div>
+</div>
+
+<script>
+   window.onload = () => {
+      fixCarousel();
+      toggleAddImageButton();
+   }
+
+   async function fixCarousel() {
+      let carouselIndicators = document.querySelectorAll('.carousel-indicators button');
+      carouselIndicators[0].classList.add('active');
+      carouselIndicators[0].setAttribute('aria-current', true);
+      document.querySelector('.carousel-item').classList.add('active'); // first 'carousel-item'
+
+      for (let x = 0; x < carouselIndicators.length; x++) {
+         let ariaLabel = 'Slide ' + (1 + x);
+         carouselIndicators[x].setAttribute('data-bs-slide-to', x);
+         carouselIndicators[x].setAttribute('aria-label', ariaLabel);
+      }
+   }
+
+   async function fillImageSavedValues(imgCard) {
+      let imgId = imgCard.getAttribute('data-img-id');
+      let imgCaption = imgCard.querySelector('figcaption').innerHTML;
+      let actionUrl = `${LOCALHOST}/U/business-profile/update-picture/${imgId}/`;
+
+      let updateForm = document.getElementById('updatePictureForm');
+      updateForm.querySelector('#id_caption').value = imgCaption;
+      updateForm.action = actionUrl;
+   }
+
+   async function toggleAddImageButton() {
+      let addImgBtn = document.getElementById('upload-picture-btn');
+      let vendorImgs = document.querySelectorAll('.vendor-img');
+
+      // Max number of pics per vendor is 5
+      if (vendorImgs.length > 4) {
+         addImgBtn.classList.add('d-none');
+      } else {
+         addImgBtn.classList.remove('d-none');
+      }
+   }
+</script>
+{% endblock extra-profile-info %}

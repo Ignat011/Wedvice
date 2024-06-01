@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %} Saved vendors {% endblock title %}
+
+{% block body %}
+{% include 'include/header.html' %}
+
+<section class="vendors-page py-5 mt-3">
+   <div class="container">
+      <h3>Сохраненные поставщики</h3>
+
+      <div class="row row-cols-1 row-cols-md-4 g-4 py-3" id="vendors-grid"></div>
+      
+      <!-- <div class="center">
+         <br><br><br>
+         <h4>No saved vendors yet!</h4>
+         <p>Browse and save vendors you'd like to work with.</p>
+      </div> -->
+   </div>
+</section>
+{% endblock body %}
+
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/bookmarks.js' %}"></script>
+
+<script>
+
+   window.addEventListener('load', () => {
+      getSavedVendors();
+   });
+
+   async function getSavedVendors() {
+      url = `${LOCALHOST}/U/bookmarks`;
+
+      let handleResponse = async function (response) {
+         let savedVendors = await response.json();
+         console.log('savedVendors');
+         console.log(savedVendors);
+         renderVendors(savedVendors);
+         activateBookmarkStatus();
+      }
+      fetchRequest(handleResponse, url, 'GET');
+   }
+
+</script>
+{% endblock scripts %}

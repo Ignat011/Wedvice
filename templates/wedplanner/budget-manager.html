@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %} Budget manager {% endblock title %}
+
+{% block body %}
+
+<!-- Add new expense Modal -->
+<div class="modal fade" id="addExpense" tabindex="-1" role="dialog" aria-labelledby="addExpenseTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <form onsubmit="createBudgetItem(event)" name="createBudgetItemForm" class="modal-content">
+         {% csrf_token %}
+
+         <div class="modal-header">
+            <h5 class="modal-title" id="addExpenseTitle">Добавить новые расходы</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+
+         <div class="modal-body">
+            <div class="modal-body">
+               {% for field in create_form.visible_fields %}
+               <div class="form-group">
+                  {{ field.label_tag }}
+                  {% render_field field class+="form-control"%}
+                  {% if field.help_text %}
+                     <span class="help-text">{{ field.help_text }}</span>
+                  {% endif %}
+                  {% for error in field.erros %}
+                     <span style="color:red">{{ error }}</span>
+                  {% endfor %}
+               </div>
+               {% endfor %}
+            </div>
+         </div>
+
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Сохранить расходы</button>
+         </div>
+      </form>
+   </div>
+</div>
+
+<!-- Update expense Modal -->
+<div class="modal fade" id="updateExpense" tabindex="-1" role="dialog" aria-labelledby="updateExpenseTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <form onsubmit="updateBudgetItem(event)" name="updateBudgetItemForm" class="modal-content">
+         {% csrf_token %}
+
+         <div class="modal-header">
+            <h5 class="modal-title" id="updateExpenseTitle">Обновить статью бюджета</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+
+         <div class="modal-body">
+            <div class="modal-body">
+               {% for field in update_form.visible_fields %}
+               <div class="form-group">
+                  {{ field.label_tag }}
+                  {% render_field field class+="form-control"%}
+                  {% if field.help_text %}
+                     <span class="help-text">{{ field.help_text }}</span>
+                  {% endif %}
+                  {% for error in field.erros %}
+                     <span style="color:red">{{ error }}</span>
+                  {% endfor %}
+               </div>
+               {% endfor %}
+            </div>
+         </div>
+
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Расходы на обновление</button>
+         </div>
+      </form>
+   </div>
+</div>
+
+<!-- Set Wedding Budget Modal -->
+<div class="modal fade" id="setWeddingBudget" tabindex="-1" role="dialog" aria-labelledby="setWeddingBudgetTitle"
+   aria-hidden="true">
+   <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <form onsubmit="setWeddingBudget(event)" name="setWeddingBudgetForm" class="modal-content">
+         {% csrf_token %}
+
+         <div class="modal-header">
+            <h5 class="modal-title" id="setWeddingBudgetTitle">Определите бюджет свадьбы</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+
+         <div class="modal-body">
+            <div class="modal-body">
+               {% for field in budget_form.visible_fields %}
+               <div class="form-group">
+                  {{ field.label_tag }}
+                  {% render_field field class+="form-control"%}
+                  {% if field.help_text %}
+                  <span class="help-text">{{ field.help_text }}</span>
+                  {% endif %}
+                  {% for error in field.erros %}
+                  <span style="color:red">{{ error }}</span>
+                  {% endfor %}
+               </div>
+               {% endfor %}
+            </div>
+         </div>
+
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Сохранить</button>
+         </div>
+      </form>
+   </div>
+</div>
+
+{% include 'include/header.html' %}
+{% include 'include/tools-nav.html' %}
+
+<section>
+   <div class="container grid-200-auto">
+      <div class="side-nav py-4 pe-2">
+         <a class="pointer nav-item nav-item-active" onclick="getAllbudgetItems()">Все расходы</a>
+         {% for category in expense_categories %}
+         <a class="pointer nav-item" data-exp-category-id="{{ category.id }}" onclick="getExpensesInCategory(this.getAttribute('data-exp-category-id'))">{{ category.name }}</a>
+         {% endfor %}
+      </div>
+
+      <div class="main-content py-4">
+         <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center py-3 bg-light">
+               <div>
+                  <div class="text-muted">Свадебный бюджет:</div>
+                  {% if user.weddingplanner.wedding_budget %}
+                  RUB <span id="wedding-budget">{{ user.weddingplanner.wedding_budget }}</span>
+                  {% else %}
+                  Не установленн. <br>
+                  <i>Нажмите на кнопку <code>Редактировать</code> для добавления вашего свадебного бюджета!<br>
+                     Бюджет очень важен для планирования мероприятий.</i>
+                  {% endif %}
+               </div>
+               <button type="button" class="btn btn-outline-primary btn-sm ms-2" data-bs-toggle="modal"
+                  data-bs-target="#setWeddingBudget">
+                  <i class="fas fa-pencil-alt"></i>
+                  <span class="ms-1">Редактировать</span>
+               </button>
+            </li>
+            <li class="list-group-item py-3 bg-light">
+               <div id="money-spent"></div>
+            </li>
+            <li class="list-group-item py-3 text-center">
+               Откройте страницу своего профиля для получения подробной информации о бюджете
+               <a href="{% url 'user-profile' %}" class="btn btn-secondary btn-sm">Перейти в профиль</a>
+            </li>
+         </ul>
+         
+         <div class="d-flex justify-content-between align-items-end my-3">
+            <div class="d-flex">
+               <span>ФИЛЬТРОВАТЬ ПО:</span>
+               <div class="form-group mx-2 mb-0">
+                  <label for="">Статус платежа:</label>
+                  <select name="rsvp-filter" id="rsvp-filter" class="form-select">
+                     <option value="" selected>---------</option>
+                     <option value="full">Полностью оплаченно</option>
+                     <option value="partial">Частично оплаченно</option>
+                     <option value="no">Не оплачено</option>
+                  </select>
+               </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExpense">
+               <i class="fas fa-plus"></i>
+               <span class="ms-1">Новые расходы</span>
+            </button>
+         </div>
+
+         <table class="table" id="BudgetItemsTable">
+            <thead>
+               <tr>
+                  <th>Расход</th>
+                  <th>Предпологаемая стоимость</th>
+                  <th>Оплаченно</th>
+                  <th class="text-end">Удалить</th>
+               </tr>
+            </thead>
+
+            <tbody></tbody>
+         </table>
+         <!-- <div class="center">
+            <br><br><br>
+            <h4>Статья бюджета еще не добавлена!</h4>
+         </div> -->
+      </div>
+   </div>
+</section>
+{% endblock body %}
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/budgeter.js' %}"></script>
+{% endblock scripts %}

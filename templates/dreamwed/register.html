@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+<div class="container center">
+   <br><br><br>
+   <h2>Wedvice Регистрация</h2>
+   <br><br>
+   <a href="{% url 'wedding-planner-register' %}">Я планирую свою свадьбу</a>
+   <br><br>
+   <a href="{% url 'vendor-register' %}">Я занимаюсь организацией свадебных торжеств</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+{% include 'include/header.html' %}
+
+<div class="container center">
+   <br><br><br>
+   <h1>Setting up project: <i>Wedvice</i>!</h1>
+   <br><br>
+   <a href="{% url 'login' %}">Login</a>
+   <br><br> or <br><br>
+   <a href="{% url 'register' %}">Register a new account</a>
+</div>
+
+{% endblock %}

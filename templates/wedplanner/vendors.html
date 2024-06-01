@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %} Vendors {% endblock title %}
+
+{% block body %}
+{% include 'include/header.html' %}
+
+<section class="py-5">
+   <div class="container">
+      <h3 class="text-center mb-4">Найдите подходящего поставщика</h3>
+      
+      <form name="search-vendors" method="POST" class="d-flex align-items-end justify-content-center">
+         {% csrf_token %}
+
+         <div>
+            <label for="browse-v-categories" class="form-label">Категория:</label>
+            <input type="text" id="browse-v-categories" list="v-categories" class="form-control">
+            <datalist id="v-categories">
+               {% for vendor_type in vendor_categories %}
+                  <option value="{{ vendor_type.name }}">
+               {% endfor %}
+            </datalist>
+         </div>
+         
+         <div class="ms-2">
+            <label for="browse-v-locations" class="form-label">Поблизости:</label>
+            <input type="text" id="browse-v-locations" list="v-locations" class="form-control">
+            <datalist id="v-locations">
+               {% for location in vendor_locations %}
+                  <option value="{{ location.city }}">
+               {% endfor %}
+            </datalist>
+         </div>
+         <button type="submit" class="btn btn-primary ms-2">Поиск</button>
+      </form>
+   </div>
+</section>
+
+<section class="vendors-page bg-light border-top py-4">
+   <div class="container">
+      <!-- <p class="m-0">
+         <i class="fas fa-search"></i>
+         <span>Wedding venue near Westlands Nairobi</span>
+      </p> -->
+
+      <div class="row row-cols-1 row-cols-md-4 g-4 py-3" id="vendors-grid"></div>
+   </div>      
+</section>
+{% endblock body %}
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/bookmarks.js' %}"></script>
+
+<script>
+
+   window.addEventListener('load', () => {
+      getAllVendors();
+   });
+
+   async function getAllVendors() {
+      url = `${LOCALHOST}/vendors/`;
+
+      let handleResponse = async function (response) {
+         let vendors = await response.json();
+         console.log('vendors');
+         console.log(vendors);
+         renderVendors(vendors);
+         activateBookmarkStatus();
+      }
+      fetchRequest(handleResponse, url, 'GET');
+   }
+
+</script>
+{% endblock scripts %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %} Vendor registration {% endblock %}
+
+{% block body %}
+<div class="container center">
+   <br><br><br>
+   <h2>Wedding Vendor Registration</h2>
+   <br>
+
+   <form action="{% url 'vendor-register' %}" method="POST" novalidate>
+      {% csrf_token %}
+
+      {% for field in form.visible_fields %}
+         <div class="form-group mb-3">
+            {{ field.label_tag }}
+            {% render_field field class+="form-control" %}
+            {% for error in field.errors %}
+            <span style="color:red">{{ error }}</span>
+            {% endfor %}
+         </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary">Создать аккаунт</button>
+
+      <br><br><br>
+      <span>У вас уже есть учетная запись?</span><br>
+      <a href="{% url 'login' %}">Логин</a>
+      <br><br><br>
+      <a href="{% url 'home' %}">Назад на главную</a>
+   </form>
+
+</div>
+
+{% endblock %}
